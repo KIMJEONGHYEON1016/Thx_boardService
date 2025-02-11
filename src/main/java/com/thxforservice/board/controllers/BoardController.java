@@ -111,33 +111,33 @@ public class BoardController {
             @Parameter(name="longText3", description = "여러줄 텍스트 추가 필드3"),
     })
     // 글 수정
-    @PatchMapping("/update/{seq}")
-    public ResponseEntity<JSONData> update(@PathVariable("seq") Long seq, @RequestBody @Valid RequestBoard form, Errors errors) {
-        form.setSeq(seq);
-        form.setMode("update");
+        @PatchMapping("/update/{seq}")
+        public ResponseEntity<JSONData> update(@PathVariable("seq") Long seq, @RequestBody @Valid RequestBoard form, Errors errors) {
+            form.setSeq(seq);
+            form.setMode("update");
 
-        return save(form, errors);
-    }
-
-    // 글 작성, 수정 처리
-    private ResponseEntity<JSONData> save(RequestBoard form, Errors errors) {
-
-        validator.validate(form, errors);
-
-        if (errors.hasErrors()) { // 검증 실패
-            throw new BadRequestException(utils.getErrorMessages(errors));
+            return save(form, errors);
         }
 
-        BoardData data = saveService.save(form);
-        data.setBoard(null);
-        data.setComments(null);
+        // 글 작성, 수정 처리
+        private ResponseEntity<JSONData> save(RequestBoard form, Errors errors) {
 
-        JSONData jsonData = new JSONData(data);
-        HttpStatus status = HttpStatus.CREATED;
-        jsonData.setStatus(status);
+            validator.validate(form, errors);
 
-        return ResponseEntity.status(status).body(jsonData);
-    }
+            if (errors.hasErrors()) { // 검증 실패
+                throw new BadRequestException(utils.getErrorMessages(errors));
+            }
+
+            BoardData data = saveService.save(form);
+            data.setBoard(null);
+            data.setComments(null);
+
+            JSONData jsonData = new JSONData(data);
+            HttpStatus status = HttpStatus.CREATED;
+            jsonData.setStatus(status);
+
+            return ResponseEntity.status(status).body(jsonData);
+        }
 
     @Operation(summary = "게시글 하나 조회", method = "GET")
     @ApiResponse(responseCode = "200")
